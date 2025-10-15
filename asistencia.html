@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Asistencia</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h2 {
+      color: #1a73e8;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0d5bb8;
+    }
+    #mensaje {
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 24px;
+    }
+    .success { color: #0f9d58; }
+    .error { color: #db4437; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>✅ Registro de Asistencia</h2>
+    <input type="text" id="idEmp" placeholder="ID de Empleado (ej: EMP001)" autocomplete="off" />
+    <input type="text" id="nombre" placeholder="Nombre Completo" autocomplete="off" />
+    <button onclick="registrar()">Registrar Entrada/Salida</button>
+    <div id="mensaje"></div>
+  </div>
+
+  <script>
+    // 🔁 ¡REEMPLAZA ESTA URL POR LA QUE OBTUVISTE EN EL PASO 3!
+    const WEB_APP_URL = "https://script.google.com/macros/s/TU_URL_AQUI/exec";
+
+    async function registrar() {
+      const id = document.getElementById("idEmp").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+      const msg = document.getElementById("mensaje");
+      
+      if (!id || !nombre) {
+        msg.className = "error";
+        msg.textContent = "⚠️ Completa ID y Nombre";
+        return;
+      }
+
+      try {
+        const url = `${WEB_APP_URL}?id=${encodeURIComponent(id)}&nombre=${encodeURIComponent(nombre)}`;
+        const response = await fetch(url, { method: "POST" });
+        const data = await response.json();
+
+        if (data.success) {
+          msg.className = "success";
+          msg.textContent = "✅ " + data.message;
+          document.getElementById("idEmp").value = "";
+          document.getElementById("nombre").value = "";
+          document.getElementById("idEmp").focus();
+        } else {
+          throw new Error(data.error || "Error en el registro");
+        }
+      } catch (err) {
+        msg.className = "error";
+        msg.textContent = "❌ " + err.message;
+      }
+    }
+
+    // Permitir Enter
+    document.getElementById("nombre").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") registrar();
+    });
+  </script>
+</body>
+</html>
